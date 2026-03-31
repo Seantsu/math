@@ -1,4 +1,5 @@
 import { roundTo } from "./utils.ts";
+import { gcdEuclid } from "./gcd.ts";
 
 export class Fraction {
   constructor(
@@ -8,6 +9,15 @@ export class Fraction {
     if (denominator === 0) {
       throw new Error("Denominator cannot be zero");
     }
+
+    if (denominator < 0) {
+      numerator = -numerator;
+      denominator = -denominator;
+    }
+
+    const gcd = gcdEuclid(numerator, denominator);
+    this.numerator = numerator / gcd;
+    this.denominator = denominator / gcd;
   }
 
   public add(other: Fraction): Fraction {
@@ -44,13 +54,17 @@ export class Fraction {
     return `${this.numerator}/${this.denominator}`;
   }
 
+  public cancel(): Fraction {
+    return new Fraction(this.numerator, this.denominator);
+  }
+
   public static parse(expression: string): Fraction {
     const parts = expression.split("/");
     if (parts.length != 2) {
       throw new Error(`illegal syntax: "[numerator]/[denominator]" required`);
     }
     const numerator = Number.parseInt(parts[0].trim());
-    const denominator = Number.parseFloat(parts[1].trim());
+    const denominator = Number.parseInt(parts[1].trim());
     if (Number.isNaN(numerator) || Number.isNaN(denominator)) {
       throw new Error(`non-numeric numerator/denominator`);
     }

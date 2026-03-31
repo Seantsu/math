@@ -106,3 +106,19 @@ Deno.test("Fraction.parse throws on non-numeric input", () => {
     assertEquals((e as Error).message, "non-numeric numerator/denominator");
   }
 });
+
+Deno.test("fraction cancel reduces correctly", () => {
+  const fraction = new Fraction(15, 20);
+  const reduced = fraction.cancel();
+  assertEquals(reduced.toString(), "3/4");
+});
+
+Deno.test("fraction constructor auto-reduces values", () => {
+  const fraction = new Fraction(10, 40);
+  assertEquals(fraction.toString(), "1/4");
+});
+
+Deno.test("fraction parse auto-reduces values", () => {
+  const fraction = Fraction.parse("  12 /  16 ");
+  assertEquals(fraction.toString(), "3/4");
+});
